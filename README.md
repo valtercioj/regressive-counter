@@ -18,7 +18,7 @@ Esse projeto foi desenvolvido com as seguintes tecnologias:
 Contador em React js que faz contagem regressiva de 5 minutos
 ## 🔖 Layout
 
-Você pode visualizar o projeto através [desse link]().
+Você pode visualizar o projeto através [desse link](https://counter-time-react.netlify.app/).
 
 ## :memo: Licença
 
