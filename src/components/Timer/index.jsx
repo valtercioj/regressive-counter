@@ -56,7 +56,7 @@ export default function Timer() {
             
             timerTimeout = setTimeout(() => {
                 setTimeLeft((previous) => previous - 1);
-            }, 10);
+            }, 1000);
         } else {
             setButtonText("Reset");
             new Audio('./assets/audio/notification.mp3').play()
