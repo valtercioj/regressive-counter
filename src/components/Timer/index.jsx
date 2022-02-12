@@ -1,5 +1,7 @@
-import { React, useState, useEffect, useRef } from "react";
-
+import { React, useState, useEffect, useRef} from "react";
+import Cicle from "../Cicle";
+import formatTime from "../../utils";
+import Modal from '../Modal'
 const TOTAL_COUNTER_TIME = 300; // seconds
 
 const BUTTON_TEXTS = {
@@ -13,17 +15,10 @@ let timerTimeout = null;
 export default function Timer() {
     const [timeLeft, setTimeLeft] = useState(TOTAL_COUNTER_TIME);
     const [buttonText, setButtonText] = useState(BUTTON_TEXTS.START);
+    const [modal, setModal] = useState(false)
     const minutesRef = useRef(null)
-
-    const startTime = () => {
-        minutesRef.current = (timeLeft / 60).toString()[0]
-        if (timeLeft === 300) {
-            return `${minutesRef.current}:00`
-        }
-        else {
-            return `${minutesRef.current}:${timeLeft % 60}`
-        }
-    }
+    
+   
     const handleClick = () => {
         switch (buttonText) {
             case BUTTON_TEXTS.START:
@@ -48,22 +43,24 @@ export default function Timer() {
     }
 
     const resetCounter = () => {
+        setModal(false)
         setButtonText("Start");
         setTimeLeft(TOTAL_COUNTER_TIME);
     }
 
-    const calculateFraction = () => {
-        return timeLeft / TOTAL_COUNTER_TIME;
-    }
+    
     useEffect(() => {
         if (buttonText !== BUTTON_TEXTS.PAUSE) return;
 
         if (timeLeft > 0) {
+            
             timerTimeout = setTimeout(() => {
                 setTimeLeft((previous) => previous - 1);
-            }, 1000);
+            }, 10);
         } else {
             setButtonText("Reset");
+            new Audio('./assets/audio/notification.mp3').play()
+            setModal(true)
         }
 
         return () => timerTimeout && clearTimeout(timerTimeout);
@@ -71,25 +68,15 @@ export default function Timer() {
 
     return (
         <>
-            <svg className="base-timer__svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                <g className="base-timer__circle">
-                    <circle className="base-timer__path-elapsed" cx="50" cy="50" r="45"></circle>
-                    <path
-                        id="base-timer-path-remaining"
-                        strokeDasharray={(calculateFraction() * 283).toFixed(0) + " 283"}
-                        className="base-timer__path-remaining"
-                        d="
-                M 50, 50
-                m -45, 0
-                a 45,45 0 1,0 90,0
-                a 45,45 0 1,0 -90,0
-                "
-                    ></path>
-                </g>
-            </svg>
+        
+        {modal? <Modal />:null}
+        
+            <Cicle timeLeft={timeLeft} TOTAL_COUNTER_TIME={TOTAL_COUNTER_TIME}/>
+            
             <span id="base-timer-label" className="base-timer__label">
-                {startTime()}
-                <button onClick={handleClick}>{buttonText}</button>
+                {formatTime(timeLeft, minutesRef)}
+
+                <button onClick={handleClick} className="base-timer-button">{buttonText}</button>
             </span>
 
         </>
